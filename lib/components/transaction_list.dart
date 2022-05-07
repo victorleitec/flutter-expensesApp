@@ -16,17 +16,15 @@ class TransactionList extends StatelessWidget {
             builder: (context, constraints) {
               return Column(
                 children: [
-                  SizedBox(height: constraints.maxHeight * 0.05),
                   SizedBox(
-                    height: constraints.maxHeight * 0.3,
+                    height: constraints.maxHeight * 0.15,
                     child: Text(
                       "No transactions registered!",
                       style: Theme.of(context).textTheme.headline6,
                     ),
                   ),
-                  SizedBox(height: constraints.maxHeight * 0.05),
                   SizedBox(
-                    height: constraints.maxHeight * 0.6,
+                    height: constraints.maxHeight * 0.5,
                     child: Image.asset(
                       "assets/images/waiting.png",
                       fit: BoxFit.cover,
@@ -67,11 +65,25 @@ class TransactionList extends StatelessWidget {
                   subtitle: Text(
                     DateFormat("d MMM y").format(tr.date),
                   ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete),
-                    color: Theme.of(context).errorColor,
-                    onPressed: () => onRemove(tr.id),
-                  ),
+                  trailing: MediaQuery.of(context).size.width > 480
+                      ? TextButton.icon(
+                          onPressed: () => onRemove(tr.id),
+                          label: Text(
+                            "Delete",
+                            style: TextStyle(
+                              color: Theme.of(context).errorColor,
+                            ),
+                          ),
+                          icon: Icon(
+                            Icons.delete,
+                            color: Theme.of(context).errorColor,
+                          ),
+                        )
+                      : IconButton(
+                          icon: const Icon(Icons.delete),
+                          color: Theme.of(context).errorColor,
+                          onPressed: () => onRemove(tr.id),
+                        ),
                 ),
               );
             },

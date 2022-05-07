@@ -1,5 +1,7 @@
+import 'package:expenses/components/adaptive_button.dart';
+import 'package:expenses/components/adaptive_date_picker.dart';
+import 'package:expenses/components/adaptive_text_field.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class TransactionForm extends StatefulWidget {
   final void Function(String, double, DateTime) onSubmit;
@@ -26,83 +28,52 @@ class _TransactionFormState extends State<TransactionForm> {
     widget.onSubmit(title, value, _selectedDate!);
   }
 
-  _showDatePicker() {
-    showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
-    ).then((pickedDate) {
-      if (pickedDate == null) {
-        return;
-      }
-
-      setState(() {
-        _selectedDate = pickedDate;
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            TextField(
-              controller: _titleController,
-              onSubmitted: (_) => _submitForm(),
-              decoration: const InputDecoration(
-                labelText: "Title",
+    return SingleChildScrollView(
+      child: Card(
+        elevation: 5,
+        child: Padding(
+          padding: EdgeInsets.only(
+            top: 10,
+            right: 10,
+            left: 10,
+            bottom: 10 + MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Column(
+            children: [
+              AdaptiveTextField(
+                label: "Title",
+                controller: _titleController,
+                onSubmitted: (_) => _submitForm(),
+                keyboardType: TextInputType.text,
               ),
-            ),
-            TextField(
-              controller: _valueController,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              onSubmitted: (_) => _submitForm(),
-              decoration: const InputDecoration(
-                labelText: "Value (R\$)",
+              AdaptiveTextField(
+                label: "Value (R\$)",
+                controller: _valueController,
+                onSubmitted: (_) => _submitForm(),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
               ),
-            ),
-            SizedBox(
-              height: 70,
-              child: Row(
+              AdaptiveDatePicker(
+                selectedDate: _selectedDate,
+                onDateChanged: (newDate) {
+                  setState(() {
+                    _selectedDate = newDate;
+                  });
+                },
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Expanded(
-                    child: Text(
-                      _selectedDate == null
-                          ? "No date selected!"
-                          : "Selected date: ${DateFormat('dd/MM/y').format(_selectedDate!)}",
-                    ),
+                  AdaptiveButton(
+                    label: "New Transaction",
+                    onPressed: _submitForm,
                   ),
-                  TextButton(
-                    onPressed: _showDatePicker,
-                    child: const Text(
-                      "Select Date",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  )
                 ],
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  style: TextButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary),
-                  onPressed: _submitForm,
-                  child: Text(
-                    "New transaction",
-                    style: Theme.of(context).textTheme.button,
-                  ),
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
